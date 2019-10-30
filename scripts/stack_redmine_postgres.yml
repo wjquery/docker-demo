@@ -1,0 +1,38 @@
+# sample for postgres stack
+#
+version: '3.1'
+
+services:
+  redmine:
+    image: redmine
+    environment:
+      REDMINE_DB_POSTGRES: db
+      REDMINE_DB_USERNAME: postgres
+      REDMINE_DB_PASSWORD: postgres
+      REDMINE_DB_DATABASE: redmine
+      REDMINE_SECRET_KEY_BASE: "docker#redmine"
+      REDMINE_PLUGINS_MIGRATE: "true"
+    volumes:
+      - /root/docker/volumes/redmine/files:/usr/src/redmine/files
+      - /root/docker/volumes/redmine/plugins:/usr/src/redmine/plugins
+      - /root/docker/volumes/redmine/themes:/usr/src/redmine/themes
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:11
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - /root/docker/volumes/postgres:/var/lib/postgresql/data
+
+  adminer:
+   image: adminer
+   restart: always
+   ports:
+     - "5532:8080"
